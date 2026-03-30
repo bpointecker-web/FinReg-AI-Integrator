@@ -1,0 +1,11 @@
+ContractID,Feature_AmountDeviation_Score,Feature_InterestDuration_Ratio,Feature_RiskClass_Encoded
+C-1001,-0.51,0.029,1
+C-1002,-0.22,0.017,1
+C-1003,-0.05,0.085,2
+C-1004,3.85,0.125,3
+C-1005,-0.11,0.016,1
+C-1006,-0.40,0.030,1
+C-1007,-0.15,0.018,1
+C-1008,0.10,0.080,2
+C-1009,0.05,0.075,2
+C-1010,-0.30,0.025,1
