@@ -26,3 +26,18 @@ Anstatt zehntausende Zeilen vor Meldeabgabe manuell zu prüfen, nutzt dieser Ans
 * **Prozess-Effizienz:** Massive Reduktion der manuellen Prüfaufwände in den Fachabteilungen.
 * **Risikominimierung:** Prävention von Datenqualitäts-Rügen oder teuren Nachmeldungen durch die EZB/Bundesbank.
 * **Architektur-Vorteil:** Vorhandene relationale DWH-Strukturen werden strategisch als "Feature Store" für fortgeschrittene KI-Initiativen nutzbar gemacht.
+
+---
+
+## 5. YouTube-Video-Analyzer
+
+Zusätzliches CLI-Tool (`youtube_analyzer.py`), das aus einer YouTube-URL automatisch das Transkript lädt und via Claude API (Opus 4.7) eine strukturierte Zusammenfassung erstellt.
+
+```bash
+pip install -r requirements.txt
+export ANTHROPIC_API_KEY="sk-ant-..."
+python youtube_analyzer.py "https://www.youtube.com/watch?v=VIDEO_ID"
+
+# Sprachpräferenz anpassen (Standard: de,en)
+python youtube_analyzer.py "https://youtu.be/VIDEO_ID" --lang en,de
+```
