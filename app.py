@@ -11,6 +11,8 @@
 
 from __future__ import annotations
 
+import os
+
 import altair as alt
 import pandas as pd
 import streamlit as st
@@ -24,13 +26,19 @@ from anomaly_detection import (
     score_current_period,
 )
 from generate_feature_store import build_benchmark, expected_interest
+from generate_feature_store import main as generate_feature_stores
 
 st.set_page_config(page_title="AI Guardian – Meldewesen-Validierung", page_icon="🛡️", layout="wide")
 
 
 @st.cache_data(show_spinner=False)
 def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
-    """Lädt beide Feature-Stores. Gecached, damit nur bei Datei-Änderung neu gelesen wird."""
+    """Lädt beide Feature-Stores. Fehlen sie – etwa bei einem frischen Deploy, wo nur
+    der Repo-Inhalt (ohne generierte CSVs) vorliegt –, werden sie zuvor aus den
+    Rohdaten erzeugt. Die App ist damit ohne manuellen Vorlauf lauffähig.
+    Gecached: läuft nur einmal je Session."""
+    if not (os.path.exists(HISTORICAL_FEATURE_STORE_PATH) and os.path.exists(CURRENT_FEATURE_STORE_PATH)):
+        generate_feature_stores()
     historical_df = load_feature_store(HISTORICAL_FEATURE_STORE_PATH)
     current_df = load_feature_store(CURRENT_FEATURE_STORE_PATH)
     return historical_df, current_df
