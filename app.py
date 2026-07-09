@@ -152,6 +152,36 @@ anomalies = result[result["Is_Anomaly"]]
 # Portfolio-Normalbereich (Betrag/Zins) für den Fokus-Vergleich im Prüf-Report.
 benchmark = build_benchmark(historical_df)
 
+# --- Meldedaten-Tabelle (echte Vertragswerte) + Export --------------------------
+st.subheader("🗂️ Aktuelle Meldedaten (geprüft)")
+st.caption(
+    "Die tatsächlich gemeldeten Vertragsdaten dieser Periode. Markierte Zeilen weichen vom "
+    "historischen Muster ab – Details und Begründung dazu im Prüf-Report unten."
+)
+meldedaten = pd.DataFrame(
+    {
+        "Vertragsnummer": result["ContractID"],
+        "Kreditbetrag": result["LoanAmount_EUR"].map(format_eur),
+        "Zinssatz": result["InterestRate"].map(format_interest),
+        "Laufzeit (Monate)": result["Duration_Months"],
+        "Anomaly-Score": result["Anomaly_Score"].map(lambda v: f"{v:.4f}"),
+        "Status": result["Is_Anomaly"].map(lambda flag: "🚩 Prüfen" if flag else "✓ ok"),
+    }
+)
+st.dataframe(
+    meldedaten.style.apply(highlight_flagged_rows, axis=1),
+    use_container_width=True,
+    hide_index=True,
+)
+st.download_button(
+    "⬇️ Ergebnis als CSV herunterladen (inkl. Feature-Werten)",
+    data=result.to_csv(index=False).encode("utf-8"),
+    file_name="anomaly_scores_output.csv",
+    mime="text/csv",
+)
+
+st.divider()
+
 # --- KPI-Kacheln ----------------------------------------------------------------
 st.subheader("Ergebnis dieser Meldeperiode")
 col1, col2, col3, col4 = st.columns(4)
@@ -250,34 +280,6 @@ with right:
     st.caption("Rote gestrichelte Linie = Anomalie-Schwellenwert. Balken links davon werden geflaggt.")
 
 st.divider()
-
-# --- Meldedaten-Tabelle (echte Vertragswerte) + Export --------------------------
-st.subheader("🗂️ Aktuelle Meldedaten (geprüft)")
-st.caption(
-    "Die tatsächlich gemeldeten Vertragsdaten dieser Periode. Markierte Zeilen weichen vom "
-    "historischen Muster ab – Details und Begründung dazu im Prüf-Report oben."
-)
-meldedaten = pd.DataFrame(
-    {
-        "Vertragsnummer": result["ContractID"],
-        "Kreditbetrag": result["LoanAmount_EUR"].map(format_eur),
-        "Zinssatz": result["InterestRate"].map(format_interest),
-        "Laufzeit (Monate)": result["Duration_Months"],
-        "Anomaly-Score": result["Anomaly_Score"].map(lambda v: f"{v:.4f}"),
-        "Status": result["Is_Anomaly"].map(lambda flag: "🚩 Prüfen" if flag else "✓ ok"),
-    }
-)
-st.dataframe(
-    meldedaten.style.apply(highlight_flagged_rows, axis=1),
-    use_container_width=True,
-    hide_index=True,
-)
-st.download_button(
-    "⬇️ Ergebnis als CSV herunterladen (inkl. Feature-Werten)",
-    data=result.to_csv(index=False).encode("utf-8"),
-    file_name="anomaly_scores_output.csv",
-    mime="text/csv",
-)
 
 with st.expander("🔧 Technische Feature-Werte (Eingabe des Modells)"):
     st.caption(
